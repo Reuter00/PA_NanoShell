@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
 						// you are in the child process
 						//This will run the first command with the arguments from res
 						execvp(x, res);
-										}
+					}
 					else if (pid > 0)
 					{
 						// you are in the parent process
