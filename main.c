@@ -5,8 +5,8 @@
 
 NOT WORKING: 
 - BYE
-- COMMAND WITH NO ARGUMENTS, only works with space after
-
+- COMMAND WITH NO ARGUMENTS, only works with space after/ 
+- Limpar espaços dos inputs
 
 In progress: Signals
 */
@@ -48,18 +48,9 @@ void trata_sinal(int signal)
 	{
 		printf(" \n ----------------------------------------- \n");
 		printf("  Recebi o sinal SIGUSR1 (%d)\n", signal);
+		//int status = system("ps -aux | grep %d | cut -d ' ' -f27", getpid());
 		printf(" ----------------------------------------- \n");
 
-		pid_t pid1 = fork();
-		if (pid1 == 0)
-		{ /* Processo filho que manda sinal 5 em 5 sec */
-			printf("Filho 1\n");
-			sleep(6);
-		}
-		else if (pid1 > 0)
-		{ /* Processo pai */
-			printf("Pai criou o filho 1\n");
-		}
 		exit(0);
 		/* Restaura valor da variavel global errno */
 		errno = aux;
@@ -74,7 +65,7 @@ int main(int argc, char *argv[])
 	(void)argc;
 	(void)argv;
 
-	char Exitcode[4] = "bye";
+	char *exitcode = "bye\n";
 	int con = 0, i;
 	char input_shell[20];
 	char *argvNULL;
@@ -100,21 +91,23 @@ int main(int argc, char *argv[])
 		ERROR(1, "sigaction - SIGINT");
 	}
 
-	// Get all arguments from terminal
-	for (int i = 0; i < argc; ++i)
-		argv[i];
+	// // Get all arguments from terminal
+	// for (int i = 0; i < argc; ++i)
+	// 	argv[i];
 
 	if (argc == 1)
 	{
 
-		while (con = 1)
+		while (con == 0)
 		{
 
 			printf("nanoShell$: ");
 
 			fgets(input_shell, sizeof(input_shell), stdin);
 
-			if (strcmp(input_shell, Exitcode) == 0)
+			//printf("*%s* \n", input_shell);
+
+			if (strcmp(input_shell, exitcode) == 0)
 			{
 				/* BYE NOT WOTKING because of size of char */
 				printf("[INFO] bye command detected. Terminating nanoshell \n");
@@ -144,20 +137,49 @@ int main(int argc, char *argv[])
 				/* realloc one extra element for the last NULL */
 
 				res = realloc(res, sizeof(char *) * (n_spaces + 1));
-				res[n_spaces] = 0;
+				res[n_spaces] = NULL;
+				char *x = res[0];
 
 				/* Assign arguments to res, making res an array with arguments only*/
-
-				for (i = 1; i < (n_spaces + 1); ++i)
+				for (i = 0; i < (n_spaces + 1); ++i)
 				{
 					res[i - 1] = res[i];
+					// if (res[i] != NULL)
+					// 	printf(" %s [%d] \n ", res[i], i);
 				}
 
-				//This will run the first command with the arguments from res
-				execvp(input_shell, res);
+				if (res[0] == NULL)
+				{
+
+					//This will run the first command with the arguments from res
+					// execvp(x, res);
+					// printf(" %s %s \n", x, res);
+				}
+				else
+				{
+
+					pid_t pid = fork();
+					if (pid == 0)
+					{
+						// you are in the child process
+						//This will run the first command with the arguments from res
+						execvp(x, res);
+										}
+					else if (pid > 0)
+					{
+						// you are in the parent process
+
+						// send a termination signal
+						//kill(pid, SIGTERM);
+					}
+					else
+					{
+						// fork had an error which should be logged...
+					}
+				}
 
 				/* free the memory allocated */
-				free(res);
+				//free(res);
 			}
 		}
 	}
