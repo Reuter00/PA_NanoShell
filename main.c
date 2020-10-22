@@ -4,9 +4,7 @@
 * @author José Oliveira, Ricardo Reuter
 
 NOT WORKING: 
-- BYE
-- COMMAND WITH NO ARGUMENTS, only works with space after/ 
-- Limpar espaços dos inputs
+
 
 In progress: Signals
 */
@@ -65,7 +63,7 @@ int main(int argc, char *argv[])
 	(void)argc;
 	(void)argv;
 
-	char *exitcode = "bye\n";
+	char *exitcode = "bye";
 	int con = 0, i;
 	char input_shell[20];
 	char *argvNULL;
@@ -105,7 +103,8 @@ int main(int argc, char *argv[])
 
 			fgets(input_shell, sizeof(input_shell), stdin);
 
-			//printf("*%s* \n", input_shell);
+			//Cleans enter from input
+			input_shell[strlen(input_shell) - 1] = 0;
 
 			if (strcmp(input_shell, exitcode) == 0)
 			{
@@ -135,51 +134,24 @@ int main(int argc, char *argv[])
 				}
 
 				/* realloc one extra element for the last NULL */
-
 				res = realloc(res, sizeof(char *) * (n_spaces + 1));
-				res[n_spaces] = NULL;
-				char *x = res[0];
 
-				/* Assign arguments to res, making res an array with arguments only*/
-				for (i = 0; i < (n_spaces + 1); ++i)
+				// Fork to execute input from shell
+				pid_t pid = fork();
+				if (pid == 0)
 				{
-					res[i - 1] = res[i];
-					// if (res[i] != NULL)
-					// 	printf(" %s [%d] \n ", res[i], i);
-				}
-
-				if (res[0] == NULL)
-				{
-
+					// you are in the child process
 					//This will run the first command with the arguments from res
-					// execvp(x, res);
-					// printf(" %s %s \n", x, res);
+					execvp(input_shell, res);
+					return 0;
 				}
-				else
+				else if (pid > 0)
 				{
+					// you are in the parent process
 
-					pid_t pid = fork();
-					if (pid == 0)
-					{
-						// you are in the child process
-						//This will run the first command with the arguments from res
-						execvp(x, res);
-					}
-					else if (pid > 0)
-					{
-						// you are in the parent process
-
-						// send a termination signal
-						//kill(pid, SIGTERM);
-					}
-					else
-					{
-						// fork had an error which should be logged...
-					}
+					// send a termination signal
+					//kill(pid, SIGTERM);
 				}
-
-				/* free the memory allocated */
-				//free(res);
 			}
 		}
 	}
