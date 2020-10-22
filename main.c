@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
 	char input_shell[20];
 	char *argvNULL;
 	struct sigaction act;
+	int tt = 0;
 
 	/* Definir a rotina de resposta a sinais */
 	act.sa_handler = trata_sinal;
@@ -100,7 +101,6 @@ int main(int argc, char *argv[])
 		{
 
 			printf("nanoShell$: ");
-
 			fgets(input_shell, sizeof(input_shell), stdin);
 
 			//Cleans enter from input
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 				/* realloc one extra element for the last NULL */
 				res = realloc(res, sizeof(char *) * (n_spaces + 1));
 
-				// Fork to execute input from shell
+				// ************** Fork to execute input from shell ************************
 				pid_t pid = fork();
 				if (pid == 0)
 				{
@@ -148,10 +148,8 @@ int main(int argc, char *argv[])
 				else if (pid > 0)
 				{
 					// you are in the parent process
-
-					// send a termination signal
-					//kill(pid, SIGTERM);
 				}
+				// ************** END of Fork to execute input from shell ************************
 			}
 		}
 	}
