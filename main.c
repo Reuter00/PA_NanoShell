@@ -19,10 +19,16 @@ In progress: Signals
 #include <string.h>
 #include "debug.h"
 #include "memory.h"
+#include <time.h>
+#include <sys/time.h>
 
-/* ---------- Signal Treatment ------------- */
+/* -------------- Signal Treatment ------------- */
 
 void trata_sinal(int signal);
+struct timeval tv;
+time_t t;
+struct tm *info;
+char buffer[64];
 
 void trata_sinal(int signal)
 {
@@ -36,7 +42,9 @@ void trata_sinal(int signal)
 		printf(" \n ----------------------------------------- \n");
 		printf("  Recieved signal SIGINT from PID (%d) \n", getpid());
 		printf(" ----------------------------------------- \n");
+
 		exit(0);
+
 		/* Restaura valor da variavel global errno */
 		errno = aux;
 	}
@@ -45,8 +53,12 @@ void trata_sinal(int signal)
 	if (signal == SIGUSR1)
 	{
 		printf(" \n ----------------------------------------- \n");
-		printf("  Recebi o sinal SIGUSR1 (%d)\n", signal);
-		//int status = system("ps -aux | grep %d | cut -d ' ' -f27", getpid());
+		printf("Recebi o sinal SIGUSR1 (%d)\n", signal);
+
+		/* Data */
+		strftime(buffer, sizeof buffer, "%Y-%m-%dT%X%z.\n", info);
+		printf("%s", buffer);
+
 		printf(" ----------------------------------------- \n");
 
 		exit(0);
@@ -96,10 +108,13 @@ int main(int argc, char *argv[])
 
 	if (argc == 1)
 	{
+		/* Data */
+		gettimeofday(&tv, NULL);
+		t = tv.tv_sec;
+		info = localtime(&t);
 
 		while (con == 0)
 		{
-
 			printf("nanoShell$: ");
 			fgets(input_shell, sizeof(input_shell), stdin);
 
