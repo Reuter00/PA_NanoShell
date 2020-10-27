@@ -3,10 +3,15 @@
 * @date 2020
 * @author José Oliveira, Ricardo Reuter
 
-NOT WORKING:
 
 
-In progress: Signals
+
+In progress:  
+-Signals -> José
+-Console input -> Ricardo 
+
+Not Working:
+- Single input in nanoshell
 */
 
 #include <stdio.h>
@@ -121,43 +126,70 @@ int main(int argc, char *argv[])
 			//Cleans enter from input
 			input_shell[strlen(input_shell) - 1] = 0;
 
+			/* BYE Function */
 			if (strcmp(input_shell, exitcode) == 0)
 			{
-				/* BYE NOT WOTKING because of size of char */
+
 				printf("[INFO] bye command detected. Terminating nanoshell \n");
 				return 0;
 			}
 			else
 			{
 
-				char **res = NULL;
+				int i = 0;
 				char *p = strtok(input_shell, " ");
-				int n_spaces = 0, i;
+				char *arguments[80];
+				int count = 0;
 
-				/* split string and append tokens to 'res' */
-
-				while (p)
+				//Split input to array
+				while (p != NULL)
 				{
-					res = realloc(res, sizeof(char *) * ++n_spaces);
-
-					if (res == NULL)
-						exit(-1); /* memory allocation failed */
-
-					res[n_spaces - 1] = p;
-
+					arguments[i++] = p;
 					p = strtok(NULL, " ");
+					//Add counter to know size of for loop in next step
+					count++;
 				}
 
-				/* realloc one extra element for the last NULL */
-				res = realloc(res, sizeof(char *) * (n_spaces + 1));
+				//Set array to pass only arguments (ex: ls la lb | arrey [0] = la arrey[1] = lb)
+				for (size_t i = 0; i < count; i++)
+				{
+
+					if (i > 0)
+					{
+						arguments[i - 1] = arguments[i];
+					}
+
+					if (i == count - 1)
+					{
+						if (i == 0)
+							arguments[i] = NULL;
+					}
+				}
+
+				//Troubleshooting variables and arreys
+				for (size_t i = 0; i < count; i++)
+				{
+
+					printf("res [%d] é : %s \n", i, arguments[i]);
+					printf("input : %s \n", input_shell);
+				}
 
 				// ************** Fork to execute input from shell ************************
 				pid_t pid = fork();
 				if (pid == 0)
 				{
+
 					// you are in the child process
-					//This will run the first command with the arguments from res
-					execvp(input_shell, res);
+					//This will run the first command with the arguments from arrey
+					if (arguments[0] == NULL)
+					{
+						execlp(input_shell, arguments);
+					}
+					else
+					{
+						execvp(input_shell, arguments);
+					}
+
 					return 0;
 				}
 				else if (pid > 0)
