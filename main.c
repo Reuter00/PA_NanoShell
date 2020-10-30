@@ -8,10 +8,10 @@
 
 In progress:  
 -Signals -> José
--Console input -> Ricardo 
+-Console input space after enter -> Ricardo 
 
 Not Working:
-- Single input in nanoshell
+
 */
 
 #include <stdio.h>
@@ -81,11 +81,9 @@ int main(int argc, char *argv[])
 	(void)argv;
 
 	char *exitcode = "bye";
-	int con = 0, i;
+	int con = 0;
 	char input_shell[20];
-	char *argvNULL;
 	struct sigaction act;
-	int tt = 0;
 
 	/* Definir a rotina de resposta a sinais */
 	act.sa_handler = trata_sinal;
@@ -151,23 +149,22 @@ int main(int argc, char *argv[])
 				}
 
 				//Set array to pass only arguments (ex: ls la lb | arrey [0] = la arrey[1] = lb)
-				for (size_t i = 0; i < count; i++)
+				for (i = 0; i < count; i++)
 				{
-
-					if (i > 0)
-					{
-						arguments[i - 1] = arguments[i];
-					}
 
 					if (i == count - 1)
 					{
 						if (i == 0)
-							arguments[i] = NULL;
+							arguments[1] = NULL;
+						else
+						{
+							arguments[count] = NULL;
+						}
 					}
 				}
 
 				//Troubleshooting variables and arreys
-				for (size_t i = 0; i < count; i++)
+				for (i = 0; i < count; i++)
 				{
 
 					printf("res [%d] é : %s \n", i, arguments[i]);
@@ -181,15 +178,8 @@ int main(int argc, char *argv[])
 
 					// you are in the child process
 					//This will run the first command with the arguments from arrey
-					if (arguments[0] == NULL)
-					{
-						execlp(input_shell, arguments);
-					}
-					else
-					{
-						execvp(input_shell, arguments);
-					}
 
+					execvp(input_shell, arguments);
 					return 0;
 				}
 				else if (pid > 0)
