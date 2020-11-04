@@ -69,6 +69,23 @@ void trata_sinal(int signal)
 		/* Restaura valor da variavel global errno */
 		errno = aux;
 	}
+
+	/* Signal SIGUSR2 */
+	if (signal == SIGUSR2)
+	{
+		printf(" \n ----------------------------------------- \n");
+		printf("Recebi o sinal SIGUSR2 (%d)\n", signal);
+
+		/* Data */
+		strftime(buffer, sizeof buffer, "%Y-%m-%dT%X%z.\n", info);
+		printf("%s", buffer);
+
+		printf(" ----------------------------------------- \n");
+
+		exit(0);
+		/* Restaura valor da variavel global errno */
+		errno = aux;
+	}
 }
 /* ---------- Signal Treatment ------------- */
 
@@ -81,7 +98,7 @@ int main(int argc, char *argv[])
 
 	char *exitcode = "bye";
 	int con = 0;
-	char input_shell[20];
+	char input_shell[80];
 	struct sigaction act;
 
 	/* Definir a rotina de resposta a sinais */
@@ -91,6 +108,12 @@ int main(int argc, char *argv[])
 	sigemptyset(&act.sa_mask);
 
 	act.sa_flags = SA_RESTART; /*recupera chamadas bloqueantes*/
+
+	/* Captura do sinal SIGUSR2 */
+	if (sigaction(SIGUSR2, &act, NULL) < 0)
+	{
+		ERROR(1, "sigaction - SIGUSR1");
+	}
 
 	/* Captura do sinal SIGUSR1 */
 	if (sigaction(SIGUSR1, &act, NULL) < 0)
@@ -104,9 +127,12 @@ int main(int argc, char *argv[])
 		ERROR(1, "sigaction - SIGINT");
 	}
 
-	// // Get all arguments from terminal
+	//Get all arguments from terminal
 	// for (int i = 0; i < argc; ++i)
-	// 	argv[i];
+	// {   date +%Y%m%d_%A -d19870527
+
+	// 	printf("ARGS[%d] de input: %s \n", i, argv[i]);
+	// }
 
 	if (argc == 1)
 	{
@@ -166,8 +192,8 @@ int main(int argc, char *argv[])
 				// for (i = 0; i < count; i++)
 				// {
 
-				// 	printf("res [%d] é : %s \n", i, arguments[i]);
-				// 	printf("input : %s \n", input_shell);
+				// 	printf("arguments [%d] é : %s \n", i, arguments[i]);
+				// 	printf("input : %d \n", count);
 				// }
 
 				// ************** Fork to execute input from shell ************************
@@ -177,7 +203,6 @@ int main(int argc, char *argv[])
 
 					// you are in the child process
 					//This will run the first command with the arguments from arrey
-
 					execvp(input_shell, arguments);
 					return 0;
 				}
@@ -185,8 +210,9 @@ int main(int argc, char *argv[])
 				{
 					int status;
 					// you are in the parent process
-
+					// Wait for pid to finish
 					waitpid(pid, &status, WNOHANG);
+					// ends zombie process
 					waitpid(pid, &status, 0);
 				}
 				// ************** END of Fork to execute input from shell ************************
