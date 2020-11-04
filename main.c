@@ -8,7 +8,6 @@
 
 In progress:  
 -Signals -> José
--Console input space after enter -> Ricardo 
 
 Not Working:
 
@@ -163,13 +162,13 @@ int main(int argc, char *argv[])
 					}
 				}
 
-				//Troubleshooting variables and arreys
-				for (i = 0; i < count; i++)
-				{
+				// //Troubleshooting variables and arreys
+				// for (i = 0; i < count; i++)
+				// {
 
-					printf("res [%d] é : %s \n", i, arguments[i]);
-					printf("input : %s \n", input_shell);
-				}
+				// 	printf("res [%d] é : %s \n", i, arguments[i]);
+				// 	printf("input : %s \n", input_shell);
+				// }
 
 				// ************** Fork to execute input from shell ************************
 				pid_t pid = fork();
@@ -184,7 +183,11 @@ int main(int argc, char *argv[])
 				}
 				else if (pid > 0)
 				{
+					int status;
 					// you are in the parent process
+
+					waitpid(pid, &status, WNOHANG);
+					waitpid(pid, &status, 0);
 				}
 				// ************** END of Fork to execute input from shell ************************
 			}
