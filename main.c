@@ -87,7 +87,17 @@ void trata_sinal(int signal)
 		errno = aux;
 	}
 }
-/* ---------- Signal Treatment ------------- */
+/* ---------- End Signal Treatment ------------- */
+
+/* ---------- Function Wrong Request ------------- */
+
+char WrongRequestMessage(char *wrongcommand)
+{
+	printf("[ERROR] Wrong Request '%s' \n", wrongcommand);
+	return 0;
+}
+
+/* ---------- End Function Wrong Request ------------- */
 
 int main(int argc, char *argv[])
 {
@@ -100,6 +110,7 @@ int main(int argc, char *argv[])
 	int con = 0;
 	char input_shell[80];
 	struct sigaction act;
+	char wrongrequestplaceholder[80];
 
 	/* Definir a rotina de resposta a sinais */
 	act.sa_handler = trata_sinal;
@@ -149,6 +160,9 @@ int main(int argc, char *argv[])
 			//Cleans enter from input
 			input_shell[strlen(input_shell) - 1] = 0;
 
+			//Coppy input to wrongrequesteplaceholder to pass later full comand in function
+			strcpy(wrongrequestplaceholder, input_shell);
+
 			/* BYE Function */
 			if (strcmp(input_shell, exitcode) == 0)
 			{
@@ -158,7 +172,7 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-
+				printf("%s \n", input_shell);
 				int i = 0;
 				char *p = strtok(input_shell, " ");
 				char *arguments[80];
@@ -173,10 +187,18 @@ int main(int argc, char *argv[])
 					count++;
 				}
 
+				for (i = 0; i < count; i++)
+				{
+					if (strstr(arguments[i], "'") || strstr(arguments[i], "\"") != NULL)
+					{
+
+						WrongRequestMessage(wrongrequestplaceholder);
+					}
+				}
+
 				//Set array to pass only arguments (ex: ls la lb | arrey [0] = la arrey[1] = lb)
 				for (i = 0; i < count; i++)
 				{
-
 					if (i == count - 1)
 					{
 						if (i == 0)
@@ -200,10 +222,9 @@ int main(int argc, char *argv[])
 				pid_t pid = fork();
 				if (pid == 0)
 				{
-
 					// you are in the child process
 					//This will run the first command with the arguments from arrey
-					execvp(input_shell, arguments);
+					//execvp(input_shell, arguments);
 					return 0;
 				}
 				else if (pid > 0)
