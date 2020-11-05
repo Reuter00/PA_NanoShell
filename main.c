@@ -139,11 +139,10 @@ int main(int argc, char *argv[])
 	}
 
 	//Get all arguments from terminal
-	// for (int i = 0; i < argc; ++i)
-	// {   date +%Y%m%d_%A -d19870527
-
-	// 	printf("ARGS[%d] de input: %s \n", i, argv[i]);
-	// }
+	for (int i = 0; i < argc; ++i)
+	{
+		printf("ARGS[%d] de input: %s \n", i, argv[i]);
+	}
 
 	if (argc == 1)
 	{
@@ -172,7 +171,7 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-				printf("%s \n", input_shell);
+
 				int i = 0;
 				char *p = strtok(input_shell, " ");
 				char *arguments[80];
@@ -189,9 +188,8 @@ int main(int argc, char *argv[])
 
 				for (i = 0; i < count; i++)
 				{
-					if (strstr(arguments[i], "'") || strstr(arguments[i], "\"") != NULL)
+					if (strstr(arguments[i], "'") || strstr(arguments[i], "\"") || strstr(arguments[i], "|") != NULL)
 					{
-
 						WrongRequestMessage(wrongrequestplaceholder);
 					}
 				}
@@ -224,7 +222,7 @@ int main(int argc, char *argv[])
 				{
 					// you are in the child process
 					//This will run the first command with the arguments from arrey
-					//execvp(input_shell, arguments);
+					execvp(input_shell, arguments);
 					return 0;
 				}
 				else if (pid > 0)
