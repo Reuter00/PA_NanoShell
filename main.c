@@ -43,9 +43,9 @@ void trata_sinal(int signal)
 	/* Signal SIGINT */
 	if (signal == SIGINT)
 	{
-		printf(" \n ----------------------------------------- \n");
+		printf(" \n *************************************** \n");
 		printf("  Recieved signal SIGINT from PID (%d) \n", getpid());
-		printf(" ----------------------------------------- \n");
+		printf(" *************************************** \n");
 
 		exit(0);
 
@@ -56,14 +56,14 @@ void trata_sinal(int signal)
 	/* Signal SIGUSR1 */
 	if (signal == SIGUSR1)
 	{
-		printf(" \n ----------------------------------------- \n");
+		printf(" \n *************************************** \n");
 		printf("Recebi o sinal SIGUSR1 (%d)\n", signal);
 
 		/* Data */
 		strftime(buffer, sizeof buffer, "%Y-%m-%dT%X%z.\n", info);
 		printf("%s", buffer);
 
-		printf(" ----------------------------------------- \n");
+		printf(" *************************************** \n");
 
 		exit(0);
 		/* Restaura valor da variavel global errno */
@@ -73,14 +73,14 @@ void trata_sinal(int signal)
 	/* Signal SIGUSR2 */
 	if (signal == SIGUSR2)
 	{
-		printf(" \n ----------------------------------------- \n");
+		printf(" \n *************************************** \n");
 		printf("Recebi o sinal SIGUSR2 (%d)\n", signal);
 
 		/* Data */
 		strftime(buffer, sizeof buffer, "%Y-%m-%dT%X%z.\n", info);
 		printf("%s", buffer);
 
-		printf(" ----------------------------------------- \n");
+		printf(" *************************************** \n");
 
 		exit(0);
 		/* Restaura valor da variavel global errno */
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 		ERROR(1, "sigaction - SIGINT");
 	}
 
-	//Get all arguments from terminal
+	//Check all arguments from terminal
 	for (int i = 0; i < argc; ++i)
 	{
 		printf("ARGS[%d] de input: %s \n", i, argv[i]);
@@ -235,6 +235,28 @@ int main(int argc, char *argv[])
 					waitpid(pid, &status, 0);
 				}
 				// ************** END of Fork to execute input from shell ************************
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < argc; i++)
+		{
+			if ((strcmp(argv[i], "-h") == 0) || (strcmp(argv[i], "--help") == 0))
+			{
+				printf(" \n *************************************** \n");
+				printf("Usage: ./Execomando [OPTION]... [FILE]... \n\n");
+				printf(" -f. --file			Execute commands found in file \n");
+				printf(" -h. --help			Displays options and more info \n");
+				printf(" -m. --max			Specify how many commands can be executed by the nanoShell  \n");
+				printf(" -s. --signalfile		Program will creat a txt file with SIGNAL commands named 'signal.txt' in local directory \n");
+				printf(" \n ------------------------------------------------------ \n");
+				printf(" |Author:   José Oliveira      Student Number: 2191738| \n");
+				printf(" |Author:   Ricardo Reuter     Student Number: 2191739| \n");
+				printf(" ------------------------------------------------------ \n");
+				printf(" *************************************** \n");
+
+				exit(0);
 			}
 		}
 	}
