@@ -72,7 +72,6 @@ void signalTreatment(int signal)
 	{
 		printf(" \n *************************************** \n");
 		printf("Recebi o sinal SIGUSR2 (%d)\n", signal);
-
 		printf(" *************************************** \n");
 
 		exit(0);
