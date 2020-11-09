@@ -1,6 +1,6 @@
 whoami
 ps
-ls
+lss
 
 #ps
 date

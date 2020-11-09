@@ -4,8 +4,6 @@
 * @author José Oliveira, Ricardo Reuter
 
 
-Not Working:
-
 */
 #include <errno.h>
 #include <stdio.h>
@@ -74,10 +72,6 @@ void signalTreatment(int signal)
 	{
 		printf(" \n *************************************** \n");
 		printf("Recebi o sinal SIGUSR2 (%d)\n", signal);
-
-		/* Date */
-		strftime(buffer, sizeof buffer, "%Y-%m-%dT%X%z.\n", info);
-		printf("%s", buffer);
 
 		printf(" *************************************** \n");
 
@@ -268,8 +262,7 @@ int main(int argc, char *argv[])
 				FILE *file = fopen(fileName, "r");	  /* should check the result */
 #define LSIZ 128
 #define RSIZ 50
-				// char line[256];
-				// int countlines = 1;
+
 				int i = 0;
 				int tot = 0;
 				char line[RSIZ][LSIZ];
@@ -291,7 +284,6 @@ int main(int argc, char *argv[])
 						if ((strcmp(line[i], "\r") == 0) || (strcmp(line[i], "\0") == 0) || (strcmp(line[i], "\n") == 0))
 						{
 							//ignoring empty lines
-							//printf("[Empty]: %d ", tot);
 						}
 						else
 						{
@@ -317,7 +309,7 @@ int main(int argc, char *argv[])
 			{
 				//Convert the max number of loop, char -> int
 				int stringnumber = atoi(argv[2]);
-
+				printf("[INFO] terminates after %d commands \n", stringnumber);
 				for (i = 0; i < stringnumber; ++i)
 				{
 
@@ -347,6 +339,7 @@ int main(int argc, char *argv[])
 						}
 					}
 				}
+				printf("[END] Executed %d commands (%s %s) \n", stringnumber, argv[1], argv[2]);
 			}
 		}
 	}
