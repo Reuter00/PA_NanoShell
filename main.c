@@ -7,7 +7,7 @@
 
 
 In progress:  
--Signals -> José
+- -f when error ocours for does one more step
 
 Not Working:
 
@@ -160,9 +160,9 @@ char ForkExec(char *input_shell)
 	{
 		// you are in the child process
 		//This will run the first command with the arguments from arrey
-		//execvp(input_shell, arguments);
 		execvp(input_shell, arguments);
 		perror("There was a error executing the command \nThe error message is :");
+
 		return 0;
 	}
 	else if (pid > 0)
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 				printf(" -m. --max			Specify how many commands can be executed by the nanoShell  \n");
 				printf(" -s. --signalfile		Program will creat a txt file with SIGNAL commands named 'signal.txt' in local directory \n");
 				printf(" \n ------------------------------------------------------ \n");
-				printf(" |Author:   José Oliveira      Student Number: 2191738| \n");
+				printf(" |Author:   José Oliveira      Student Number: 2191797| \n");
 				printf(" |Author:   Ricardo Reuter     Student Number: 2191739| \n");
 				printf(" ------------------------------------------------------ \n");
 				printf(" *************************************** \n");
@@ -293,19 +293,22 @@ int main(int argc, char *argv[])
 				printf("[INFO] executing from file '%s' \n", fileName);
 				while (fgets(line[i], LSIZ, file))
 				{
-					line[i][strlen(line[i])] = '\0';
+
 					i++;
 				}
 				tot = i;
+				// countfile will count the number of commands, ignoring # and empty rows
 				int countfile = 1;
 				for (i = 0; i < tot; ++i)
 				{
 
 					if (!strstr(line[i], "#"))
 					{
+
 						if ((strcmp(line[i], "\r") == 0) || (strcmp(line[i], "\0") == 0) || (strcmp(line[i], "\n") == 0))
 						{
 							//ignoring empty lines
+							//printf("[Empty]: %d ", tot);
 						}
 						else
 						{
@@ -321,11 +324,46 @@ int main(int argc, char *argv[])
 					}
 				}
 
-				return 0;
-
 				fclose(file);
 
 				return 0;
+			}
+
+			// -m , --max
+			if ((strcmp(argv[i], "-m") == 0) || (strcmp(argv[i], "--max") == 0))
+			{
+				//Convert the max number of loop, char -> int
+				int stringnumber = atoi(argv[2]);
+
+				for (i = 0; i < stringnumber; ++i)
+				{
+
+					printf("nanoShell$: ");
+					fgets(input_shell, sizeof(input_shell), stdin);
+
+					if (strcmp(input_shell, "\n") == 0)
+					{
+						//this condition exist because it will create multiple pids if don't
+					}
+					else
+					{
+
+						//Cleans enter from input
+						input_shell[strlen(input_shell) - 1] = 0;
+
+						/* BYE Function */
+						if (strcmp(input_shell, exitcode) == 0)
+						{
+							printf("[INFO] bye command detected. Terminating nanoshell \n");
+							return 0;
+						}
+						else
+						{
+							// ************** Calling Fork and Execute Function ************************
+							ForkExec(input_shell);
+						}
+					}
+				}
 			}
 		}
 	}
