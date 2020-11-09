@@ -4,11 +4,6 @@
 * @author José Oliveira, Ricardo Reuter
 
 
-
-
-In progress:  
-- -f when error ocours for does one more step
-
 Not Working:
 
 */
@@ -161,7 +156,7 @@ char ForkExec(char *input_shell)
 		// you are in the child process
 		//This will run the first command with the arguments from arrey
 		execvp(input_shell, arguments);
-		perror("There was a error executing the command \nThe error message is :");
+		//perror("There was a error executing the command \nThe error message is :");
 
 		return 0;
 	}
@@ -187,6 +182,8 @@ int main(int argc, char *argv[])
 	(void)argv;
 	struct sigaction act;
 	int con = 0;
+
+	// ************** Start of Signal Treatment ************************
 
 	/* Definir a rotina de resposta a sinais */
 	act.sa_handler = trata_sinal;
@@ -214,11 +211,7 @@ int main(int argc, char *argv[])
 		ERROR(1, "sigaction - SIGINT");
 	}
 
-	//Check all arguments from terminal
-	for (int i = 0; i < argc; ++i)
-	{
-		//printf("ARGS[%d] de input: %s \n", i, argv[i]);
-	}
+	// ************** End of Signal Treatment ************************
 
 	if (argc == 1)
 	{
@@ -293,7 +286,6 @@ int main(int argc, char *argv[])
 				printf("[INFO] executing from file '%s' \n", fileName);
 				while (fgets(line[i], LSIZ, file))
 				{
-
 					i++;
 				}
 				tot = i;

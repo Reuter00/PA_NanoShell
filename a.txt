@@ -1,6 +1,8 @@
 whoami
 ps
-lss
+ls
+
+#ps
 date
-ls "a.txt"
+
 
