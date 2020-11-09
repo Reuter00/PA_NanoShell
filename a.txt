@@ -1,2 +1,7 @@
 whoami
-ls -la
+psp
+date
+ls
+ls 
+ls 
+lss

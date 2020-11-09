@@ -12,7 +12,7 @@ In progress:
 Not Working:
 
 */
-
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -160,7 +160,9 @@ char ForkExec(char *input_shell)
 	{
 		// you are in the child process
 		//This will run the first command with the arguments from arrey
+		//execvp(input_shell, arguments);
 		execvp(input_shell, arguments);
+		perror("There was a error executing the command \nThe error message is :");
 		return 0;
 	}
 	else if (pid > 0)
@@ -232,7 +234,7 @@ int main(int argc, char *argv[])
 
 			if (strcmp(input_shell, "\n") == 0)
 			{
-				//this condition exist because it will create multiple pids
+				//this condition exist because it will create multiple pids if don't
 			}
 			else
 			{
@@ -280,23 +282,50 @@ int main(int argc, char *argv[])
 			{
 				char const *const fileName = argv[2]; /* should check that argc > 1 */
 				FILE *file = fopen(fileName, "r");	  /* should check the result */
-				char line[256];
+#define LSIZ 128
+#define RSIZ 50
+				// char line[256];
+				// int countlines = 1;
+				int i = 0;
+				int tot = 0;
+				char line[RSIZ][LSIZ];
 
-				while (fgets(line, sizeof(line), file))
+				printf("[INFO] executing from file '%s' \n", fileName);
+				while (fgets(line[i], LSIZ, file))
 				{
-					/* note that fgets don't strip the terminating \n, checking its
-           presence would allow to handle lines longer that sizeof(line) */
-					printf("%s \n", line);
+					line[i][strlen(line[i])] = '\0';
+					i++;
 				}
-				/* may check feof here to make a difference between eof and io failure -- network
-       timeout for instance */
+				tot = i;
+				int countfile = 1;
+				for (i = 0; i < tot; ++i)
+				{
+
+					if (!strstr(line[i], "#"))
+					{
+						if ((strcmp(line[i], "\r") == 0) || (strcmp(line[i], "\0") == 0) || (strcmp(line[i], "\n") == 0))
+						{
+							//ignoring empty lines
+						}
+						else
+						{
+							printf("[Command #%d]: ", countfile);
+							printf("%s", line[i]);
+							//Cleans enter from input
+							line[i][strlen(line[i]) - 1] = 0;
+							/* Call Fork and Execute Function */
+							ForkExec(line[i]);
+							printf("\n");
+							countfile += 1;
+						}
+					}
+				}
+
+				return 0;
 
 				fclose(file);
 
 				return 0;
-
-				// FILE *fptr;
-				// fopen(argv[2], "w");
 			}
 		}
 	}
