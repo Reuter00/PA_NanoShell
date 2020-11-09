@@ -27,16 +27,16 @@ char wrongrequestplaceholder[80];
 
 /* -------------- Signal Treatment ------------- */
 
-void trata_sinal(int signal);
+void signalTreatment(int signal);
 struct timeval tv;
 time_t t;
 struct tm *info;
 char buffer[64];
 
-void trata_sinal(int signal)
+void signalTreatment(int signal)
 {
 	int aux;
-	/* Copia da variavel global errno */
+	/* copys global varible errno */
 	aux = errno;
 
 	/* Signal SIGINT */
@@ -48,7 +48,7 @@ void trata_sinal(int signal)
 
 		exit(0);
 
-		/* Restaura valor da variavel global errno */
+		/* Restore global varible errno */
 		errno = aux;
 	}
 
@@ -56,16 +56,16 @@ void trata_sinal(int signal)
 	if (signal == SIGUSR1)
 	{
 		printf(" \n *************************************** \n");
-		printf("Recebi o sinal SIGUSR1 (%d)\n", signal);
+		printf("Recieved signal SIGUSR1 (%d)\n", signal);
 
-		/* Data */
+		/* Date */
 		strftime(buffer, sizeof buffer, "%Y-%m-%dT%X%z.\n", info);
 		printf("%s", buffer);
 
 		printf(" *************************************** \n");
 
 		exit(0);
-		/* Restaura valor da variavel global errno */
+		/* Restore global varible errno */
 		errno = aux;
 	}
 
@@ -75,14 +75,14 @@ void trata_sinal(int signal)
 		printf(" \n *************************************** \n");
 		printf("Recebi o sinal SIGUSR2 (%d)\n", signal);
 
-		/* Data */
+		/* Date */
 		strftime(buffer, sizeof buffer, "%Y-%m-%dT%X%z.\n", info);
 		printf("%s", buffer);
 
 		printf(" *************************************** \n");
 
 		exit(0);
-		/* Restaura valor da variavel global errno */
+		/* Restore global varible errno */
 		errno = aux;
 	}
 }
@@ -141,14 +141,6 @@ char ForkExec(char *input_shell)
 		}
 	}
 
-	// //Troubleshooting variables and arreys
-	// for (i = 0; i < count; i++)
-	// {
-
-	// 	printf("arguments [%d] é : %s \n", i, arguments[i]);
-	// 	printf("input : %s \n", input_shell);
-	// }
-
 	// ************** Fork to execute input from shell ************************
 	pid_t pid = fork();
 	if (pid == 0)
@@ -156,7 +148,7 @@ char ForkExec(char *input_shell)
 		// you are in the child process
 		//This will run the first command with the arguments from arrey
 		execvp(input_shell, arguments);
-		//perror("There was a error executing the command \nThe error message is :");
+		perror("There was a error executing the command \nThe error message is :");
 
 		return 0;
 	}
@@ -166,7 +158,6 @@ char ForkExec(char *input_shell)
 		// you are in the parent process
 		// Wait for pid to finish
 		waitpid(pid, &status, WNOHANG);
-		// ends zombie process
 		waitpid(pid, &status, 0);
 	}
 	return 0;
@@ -186,7 +177,7 @@ int main(int argc, char *argv[])
 	// ************** Start of Signal Treatment ************************
 
 	/* Definir a rotina de resposta a sinais */
-	act.sa_handler = trata_sinal;
+	act.sa_handler = signalTreatment;
 
 	/* mascara sem sinais -- nao bloqueia os sinais */
 	sigemptyset(&act.sa_mask);
@@ -215,7 +206,7 @@ int main(int argc, char *argv[])
 
 	if (argc == 1)
 	{
-		/* Data */
+		/* Date */
 		gettimeofday(&tv, NULL);
 		t = tv.tv_sec;
 		info = localtime(&t);
